@@ -1,0 +1,22 @@
+body{
+    background-color: rgb(245, 237, 220);
+}
+.h2{
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: medium;
+}
+.h3{
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: medium;
+}
+
+#content{
+    font-size: smaller;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+#header{
+    font-size: larger;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+
