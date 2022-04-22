@@ -1,0 +1,18 @@
+body{
+    background-color: #9fb785;
+    text-align: center;
+    padding: 18px 45px 45px;
+
+    color: black;
+}
+
+h1 {
+    font-family: Arial, Helvetica, sans-serif, serif;
+}
+
+canvas {
+    background-color: black;
+    border: 5px solid seagreen;
+    border-radius: 7px;
+    box-shadow: 0 0 100px lightgoldenrodyellow;
+}
