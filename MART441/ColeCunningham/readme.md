@@ -1,8 +1,7 @@
-### HW12
+### HW13
 
-I think it mostly works. Sometimes a score is counted multiple times but not always. Hitting objects, the wall, or
-computer opponent resets the player and score. The computer can move through objects but is also reset if it hits
-the wall. I feel my script was getting pretty messy at the end and would consider splitting it up into multiple files 
-next time.
+This was another rewarding assignment to get working, and I'm glad we had the step-by-step walk-through.
+My game is very simple with the player collecting orbs and avoiding blocks. The Tetris blocks I used are
+really just rectangular images, so their collision detection is a bit off.
 
-https://cunningham-cole.github.io/MART441/HW12/
+https://cunningham-cole.github.io/MART441/HW13/

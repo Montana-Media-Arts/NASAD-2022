@@ -1,23 +1,173 @@
-<!DOCTYPE html>
-<html lang="en-US">
+<!doctype html>
+<html lang="en">
 <head>
-    <title>HW 12</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8" />
+    <title>HW 13</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
-            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 </head>
 <body>
-<h1>Use WASD to control your block</h1>
-<p></p>
-<canvas id="myCanvas" height="700" width="1200"></canvas>
-<br><br>
+
+<h2>Press SPACEBAR repeatedly to fly. Use the arrow keys to control direction.<br>
+Collect the orbs and avoid the Tetris blocks.</h2>
 
 <div>
-    <audio id="music" src="media/A_Bit_Of_Hope_-_David_Fesliyan.mp3" controls>
-    </audio>
+<script type="text/javascript">
+
+var config = {
+    type: Phaser.AUTO,
+    width: 800,
+    height: 800,
+    physics: {
+        default: 'arcade',
+        arcade: {
+            gravity: { y: 300 },
+            debug: false
+        }
+    },
+    scene: {
+        preload: preload,
+        create: create,
+        update: update
+    }
+};
+
+var player;
+var stars;
+var floor;
+var enemy_blocks;
+var cursors;
+var score = 0;
+var gameOver = false;
+var scoreText;
+
+var game = new Phaser.Game(config);
+
+function preload (){
+    this.load.image('sky', 'assets/deep-space.jpg');
+    this.load.image('ground', 'assets/gameboy.png');
+    this.load.image('star', 'assets/orb.png');
+    this.load.image('dude', 'assets/ufo.png');
+
+    this.load.image('block1', 'assets/tetrisblock1.png');
+    this.load.image('block2', 'assets/tetrisblock2.png');
+    this.load.image('block3', 'assets/tetrisblock3.png');
+}
+
+function create (){
+
+    //  Background creation
+    this.add.image(400, 300, 'sky').setScale(1.8);
+    floor = this.physics.add.staticGroup();
+
+    //  Ground and friendly platform creation
+    floor.create(701, 780, 'ground').refreshBody();
+    floor.create(501, 780, 'ground')
+    floor.create(301, 780, 'ground')
+    floor.create(101 , 780, 'ground')
+
+    floor.create(101, 300, 'ground');
+    floor.create(400, 550, 'ground');
+    floor.create(701, 190, 'ground');
+
+    //  Enemy block creation
+    enemy_blocks = this.physics.add.staticGroup();
+
+    enemy_blocks.create(101, 300, 'ground');
+    enemy_blocks.create(400, 550, 'ground');
+    enemy_blocks.create(701, 190, 'ground');
+    // Yellow blocks
+    enemy_blocks.create(129, 367, 'block1').setScale(0.5).refreshBody();
+    enemy_blocks.create(378, 483, 'block1').setScale(0.5).refreshBody();
+    enemy_blocks.create(701, 640, 'block1').setScale(0.5).refreshBody();
+    // Purple blocks
+    enemy_blocks.create(200, 100, 'block2').setScale(0.5).refreshBody();
+    enemy_blocks.create(426, 482, 'block2').setScale(0.5).refreshBody();
+    enemy_blocks.create(575, 200, 'block2').setScale(0.5).refreshBody();
+    // Green blocks
+    enemy_blocks.create(190, 330, 'block3').setScale(0.5).refreshBody();
+    enemy_blocks.create(463, 494, 'block3').setScale(0.5).refreshBody();
+    enemy_blocks.create(640, 250, 'block3').setScale(0.5).refreshBody();
+
+    // The player and its settings
+    player = this.physics.add.sprite(100, 450, 'dude').setScale(1.5);;
+
+    //  Player physics properties. Give the little guy a slight bounce.
+    player.setBounce(0.5);
+    player.setCollideWorldBounds(true);
+
+    //  Input Events
+    cursors = this.input.keyboard.createCursorKeys();
+
+    //  Some stars to collect, 12 in total, evenly spaced 70 pixels apart along the x axis
+    stars = this.physics.add.group({
+        key: 'star',
+        repeat: 11,
+        setXY: { x: 12, y: 100, stepX: 70, stepY: 20 },
+    });
+
+
+    //stars.setCollideWorldBounds(false);
+    stars.children.iterate(function (child) {
+        //  Give each star a slightly different bounce
+        child.setBounceY(Phaser.Math.FloatBetween(1, 1));
+    });
+
+    //  The score
+    scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: 'white'});
+
+    //  Collide the player with floor, stars, and blocks
+    this.physics.add.collider(player, floor);
+    this.physics.add.collider(stars, floor);
+    this.physics.add.collider(stars, enemy_blocks);
+
+    //  Checks to see if the player overlaps with any of the stars if he does call the collectStar function
+    this.physics.add.overlap(player, stars, collectStar, null, this);
+    this.physics.add.collider(player, enemy_blocks, hitBlock, null, this);
+}
+
+function update (){
+    if (gameOver){
+        scoreText = this.add.text(180, 200, 'GAME OVER', { fontSize: '84px', fill: 'white'});
+        return;
+    }
+
+    if (cursors.left.isDown){
+        player.setVelocityX(-160);
+    }
+    else if (cursors.right.isDown){
+        player.setVelocityX(160);
+    }
+    else{
+        player.setVelocityX(0);
+    }
+
+    if (cursors.space.isDown){
+        player.setVelocityY(-150 );
+    }
+}
+
+function collectStar (player, star){
+    star.disableBody(true, true);
+
+    //  Add and update the score
+    score += 10;
+    scoreText.setText('Score: ' + score);
+
+    if (stars.countActive(true) === 0){
+        this.physics.pause();
+        scoreText = this.add.text(200, 200, 'YOU WIN', { fontSize: '84px', fill: 'white'});
+    }
+}
+
+function hitBlock (player, enemy_blocks){
+    this.physics.pause();
+    player.setTint(0xff0000);
+    gameOver = true;
+}
+
+</script>
 </div>
 
-<script src="script.js"></script>
 </body>
 </html>

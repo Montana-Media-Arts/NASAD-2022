@@ -1,18 +1,12 @@
 body{
-    background-color: #9fb785;
+    background-color: black;
     text-align: center;
     padding: 18px 45px 45px;
-
-    color: black;
-}
-
-h1 {
-    font-family: Arial, Helvetica, sans-serif, serif;
+    color: white;
 }
 
 canvas {
-    background-color: black;
-    border: 5px solid seagreen;
+    border: 5px solid indianred;
     border-radius: 7px;
-    box-shadow: 0 0 100px lightgoldenrodyellow;
+    box-shadow: 0 0 100px palevioletred;
 }
